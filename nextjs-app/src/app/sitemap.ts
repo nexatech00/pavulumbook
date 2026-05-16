@@ -3,6 +3,8 @@ import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://pavulum.com";
 
+// Build-time sitemap generation - gracefully handles missing env vars
+
 export const revalidate = 3600; // 1 hour
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
