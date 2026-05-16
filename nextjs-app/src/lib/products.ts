@@ -42,13 +42,81 @@ const mapRow = (r: Row): Product => ({
   images: r.images ?? [],
 });
 
+// Mock products for demo/development
+const MOCK_PRODUCTS: Product[] = [
+  {
+    id: "1",
+    slug: "the-pause-book",
+    title: "The Pause",
+    author: "Jane",
+    category: "books",
+    price: 24.99,
+    description: "A guide to intentional living",
+    longDescription: "Learn how to pause and reflect in our fast-paced world.",
+    digital: false,
+    images: ["https://images.unsplash.com/photo-1507842217343-583f20270319?auto=format&fit=crop&w=800&q=80"],
+  },
+  {
+    id: "2",
+    slug: "conversations-that-matter",
+    title: "Conversations That Matter",
+    author: "Jane",
+    category: "books",
+    price: 22.99,
+    description: "Deep dialogues for meaningful relationships",
+    longDescription: "Explore how to have conversations that truly connect.",
+    digital: false,
+    images: ["https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=800&q=80"],
+  },
+  {
+    id: "3",
+    slug: "parenting-with-intention",
+    title: "Parenting with Intention",
+    author: "Jane",
+    category: "books",
+    price: 26.99,
+    description: "Thoughtful approaches to raising children",
+    longDescription: "A practical guide for intentional parenting.",
+    digital: false,
+    images: ["https://images.unsplash.com/photo-1507842217343-583f20270319?auto=format&fit=crop&w=800&q=80"],
+  },
+  {
+    id: "4",
+    slug: "mindfulness-course",
+    title: "Mindfulness Essentials",
+    category: "courses",
+    price: 49.99,
+    description: "8-week course on mindfulness and meditation",
+    longDescription: "Learn practical mindfulness techniques for daily life.",
+    digital: true,
+    images: ["https://images.unsplash.com/photo-1516321318423-f06f70504504?auto=format&fit=crop&w=800&q=80"],
+  },
+  {
+    id: "5",
+    slug: "writing-course",
+    title: "Writing Your Story",
+    category: "courses",
+    price: 59.99,
+    description: "Learn to write with clarity and purpose",
+    longDescription: "A comprehensive course on personal and professional writing.",
+    digital: true,
+    images: ["https://images.unsplash.com/photo-1455849318169-8c8e4f1a629b?auto=format&fit=crop&w=800&q=80"],
+  },
+];
+
 export async function fetchProducts(): Promise<Product[]> {
-  const { data, error } = await supabase
-    .from("products")
-    .select("*")
-    .order("created_at", { ascending: true });
-  if (error) throw error;
-  return (data as Row[]).map(mapRow);
+  try {
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .order("created_at", { ascending: true });
+    if (error) throw error;
+    return (data as Row[]).map(mapRow);
+  } catch (error) {
+    // Return mock data if Supabase fails
+    console.warn("Using mock products - Supabase not configured");
+    return MOCK_PRODUCTS;
+  }
 }
 
 export async function fetchProductBySlug(slug: string): Promise<Product | null> {
