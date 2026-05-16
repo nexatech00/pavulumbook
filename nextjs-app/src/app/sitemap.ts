@@ -22,12 +22,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: path === "/" ? 1 : 0.8,
   }));
 
-  const { data } = await supabaseAdmin.from("products").select("slug");
-  const productRoutes: MetadataRoute.Sitemap = (data ?? []).map((p) => ({
-    url: `${BASE_URL}/product/${p.slug}`,
-    changeFrequency: "weekly",
-    priority: 0.7,
-  }));
+  let productRoutes: MetadataRoute.Sitemap = [];
+  
+  // Only fetch products if env vars are available
+  if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    try {
+      const { data } = await supabaseAdmin.from("products").select("slug");
+      productRoutes = (data ?? []).map((p) => ({
+        url: `${BASE_URL}/product/${p.slug}`,
+        changeFrequency: "weekly",
+        priority: 0.7,
+      }));
+    } catch (error) {
+      console.warn("Failed to fetch products for sitemap:", error);
+    }
+  }
 
   return [...staticRoutes, ...productRoutes];
 }
