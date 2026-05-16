@@ -26,8 +26,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   let productRoutes: MetadataRoute.Sitemap = [];
   
-  // Only fetch products if env vars are available
-  if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  // Only fetch products if env vars are properly configured (not placeholders)
+  const hasValidConfig = 
+    process.env.NEXT_PUBLIC_SUPABASE_URL?.startsWith("https://") &&
+    process.env.SUPABASE_SERVICE_ROLE_KEY &&
+    !process.env.NEXT_PUBLIC_SUPABASE_URL?.includes("placeholder");
+  
+  if (hasValidConfig) {
     try {
       const { data } = await supabaseAdmin.from("products").select("slug");
       productRoutes = (data ?? []).map((p) => ({
@@ -36,7 +41,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.7,
       }));
     } catch (error) {
-      console.warn("Failed to fetch products for sitemap:", error);
+      // Silently fail - sitemap will just have static routes
     }
   }
 
