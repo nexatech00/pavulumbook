@@ -67,6 +67,7 @@ export function useProducts() {
 
 export function useProductsByCategory(cat: Category) {
   const q = useProducts();
+  // Return empty array if query fails (e.g., missing Supabase config)
   return { ...q, data: q.data?.filter((p) => p.category === cat) ?? [] };
 }
 
