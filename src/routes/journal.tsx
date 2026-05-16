@@ -1,0 +1,42 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { SiteLayout } from "@/components/site/Layout";
+import { essays } from "@/lib/products";
+
+export const Route = createFileRoute("/journal")({
+  head: () => ({
+    meta: [
+      { title: "Journal — Pavulum" },
+      { name: "description", content: "Essays and reflections on intentional living." },
+      { property: "og:title", content: "Journal — Pavulum" },
+      { property: "og:description", content: "Essays and reflections on intentional living." },
+    ],
+    links: [{ rel: "canonical", href: "/journal" }],
+  }),
+  component: JournalPage,
+});
+
+function JournalPage() {
+  return (
+    <SiteLayout>
+      <div className="mx-auto max-w-3xl px-6 py-16">
+        <header className="text-center">
+          <p className="text-xs uppercase tracking-[0.2em] text-soft-gold">Journal</p>
+          <h1 className="mt-3 font-serif text-5xl text-deep-brown">Reflections</h1>
+          <p className="mt-3 italic text-charcoal/70">Essays from the kitchen floor.</p>
+        </header>
+        <div className="mt-14 divide-y divide-border">
+          {essays.map((e) => (
+            <article key={e.slug} className="py-10">
+              <h2 className="font-serif text-3xl text-deep-brown">{e.title}</h2>
+              <p className="mt-2 text-sm text-charcoal/55">{e.readTime}</p>
+              <p className="mt-4 leading-relaxed text-charcoal/85">{e.excerpt}</p>
+              <a href="#" className="mt-4 inline-block text-terracotta hover:underline">
+                Continue reading →
+              </a>
+            </article>
+          ))}
+        </div>
+      </div>
+    </SiteLayout>
+  );
+}
